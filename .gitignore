@@ -1,0 +1,38 @@
+# Xcode
+*.xcworkspace
+*.xccheckout
+*.xcuserstate
+*.xcuserdatad*
+*.xcscmblueprint
+.idea/
+DerivedData/
+build/
+*.moved-aside
+*.hmap
+*.ipa
+*.app
+*.dSYM
+*.xcarchive
+
+# SwiftPM
+.build/
+Package.resolved
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# User data
+*.swp
+*.lock
+*.tmp
+*.orig
+
+# Logs
+*.log
+
+# macOS files
+.DS_Store
+.AppleDouble
+.LSOverride
+*.icloud
