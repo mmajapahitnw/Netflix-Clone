@@ -125,7 +125,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
 //                }
 //            }
         case Sections.Popular.rawValue:
-            APICaller.shared.getTrendingMovies { results in
+            APICaller.shared.getPopular { results in
                 switch results {
                 case .success(let titles):
                     cell.configure(with: titles)
@@ -134,7 +134,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
                 }
             }
         case Sections.TopRated.rawValue:
-            APICaller.shared.getTrendingMovies { results in
+            APICaller.shared.getTopRated { results in
                 switch results {
                 case .success(let titles):
                     cell.configure(with: titles)
@@ -143,7 +143,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
                 }
             }
         case Sections.UpcomingMovies.rawValue:
-            APICaller.shared.getTrendingMovies { results in
+            APICaller.shared.getUpcomingMovies { results in
                 switch results {
                 case .success(let titles):
                     cell.configure(with: titles)
