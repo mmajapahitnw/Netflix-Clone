@@ -20,9 +20,7 @@ enum APIError: Error {
 class APICaller {
     static let shared = APICaller()
     
-    func getTrendingMovies(completion: @escaping (Result<[Movie], Error>) -> Void) {
-
-        let url = URL(string: "\(Constants.baseURL)/3/trending/movie/day")!
+    private func getURLRequest(url: URL) -> URLRequest {
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
         let queryItems: [URLQueryItem] = [
           URLQueryItem(name: "language", value: "en-US"),
@@ -36,7 +34,15 @@ class APICaller {
           "accept": "application/json",
           "Authorization": "Bearer \(Constants.READ_ACCESS_TOKEN)"
         ]
+        
+        return request
+    }
+    
+    func getTrendingMovies(completion: @escaping (Result<[Movie], Error>) -> Void) {
 
+        let url = URL(string: "\(Constants.baseURL)/3/trending/movie/day")!
+        
+        let request = getURLRequest(url: url)
 
         
         let task = URLSession.shared.dataTask(with: request) { data, _, error in
@@ -46,8 +52,10 @@ class APICaller {
             }
             
             do {
+                // check json content without making related object
 //                let results = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
 //                print(results)
+                
                 let results = try JSONDecoder().decode(TrendingMoviesResponse.self, from: data)
                 completion(.success(results.results))
                 
@@ -58,12 +66,80 @@ class APICaller {
         
         task.resume()
         
-        //        do {
-        //            let (data, _) = try await URLSession.shared.data(for: request)
-        //            print(String(decoding: data, as: UTF8.self))
-        //        } catch {
-        //            print(error.localizedDescription)
-        //        }
+    }
+    
+    func getTrendingTVs(completion: @escaping (Result<[TVShow], Error>) -> Void) {
+        guard let url = URL(string: "\(Constants.baseURL)/3/trending/tv/day") else { return }
         
+        let request = getURLRequest(url: url)
+        
+        let task = URLSession.shared.dataTask(with: request) { data, _, error in
+            guard let data = data, error == nil else {
+                return
+            }
+            
+            do {
+                let results = try JSONDecoder().decode(TrendingTVResponse.self, from: data)
+                print(results)
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        task.resume()
+    }
+    
+    func getUpcomingMovies(completion: @escaping (Result<[Movie], Error>) -> Void) {
+        guard let url = URL(string: "\(Constants.baseURL)/3/movie/upcoming") else { return }
+                
+        let request = getURLRequest(url: url)
+        
+        let task = URLSession.shared.dataTask(with: request) { data, _, error in
+            guard let data = data, error == nil else { return }
+            
+            do {
+                let results = try JSONDecoder().decode(TrendingMoviesResponse.self, from: data)
+                print(results)
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        task.resume()
+    }
+    
+    func getPopular(completion: @escaping (Result<[Movie], Error>) -> Void) {
+        guard let url = URL(string: "\(Constants.baseURL)/3/movie/popular") else { return }
+        
+        let request = getURLRequest(url: url)
+        
+        let task = URLSession.shared.dataTask(with: request) { data, _, error in
+            guard let data = data, error == nil else { return }
+            
+            do {
+                let results = try JSONDecoder().decode(TrendingMoviesResponse.self, from: data)
+                print(results)
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        task.resume()
+        
+    }
+    
+    func getTopRated(completion: @escaping (Result<[Movie], Error>) -> Void) {
+        guard let url = URL(string: "\(Constants.baseURL)/3/movie/top_rated") else { return }
+        
+        let request = getURLRequest(url: url)
+        
+        let task = URLSession.shared.dataTask(with: request) { data, _, error in
+            guard let data=data, error==nil else { return }
+            
+            do {
+                let results = try JSONDecoder().decode(TrendingMoviesResponse.self, from: data)
+                print(results)
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        task.resume()
     }
 }
