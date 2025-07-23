@@ -13,17 +13,14 @@ struct Constants {
     static let baseURL = "https://api.themoviedb.org"
 }
 
+enum APIError: Error {
+    case failedToGetData
+}
 
 class APICaller {
     static let shared = APICaller()
     
-    func getTrendingMovies(completion: @escaping (String) -> Void) {
-        
-//        guard let url = URL(string: "\(Constants.baseURL)/3/trending/movie/day?language=en-US") else { return }
-                
-        // https://api.themoviedb.org/3/trending/movie/day?language=en-US
-        
-        
+    func getTrendingMovies(completion: @escaping (Result<[Movie], Error>) -> Void) {
 
         let url = URL(string: "\(Constants.baseURL)/3/trending/movie/day")!
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
@@ -49,10 +46,13 @@ class APICaller {
             }
             
             do {
-                let results = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
-                print(results)
+//                let results = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+//                print(results)
+                let results = try JSONDecoder().decode(TrendingMoviesResponse.self, from: data)
+                completion(.success(results.results))
+                
             } catch {
-                print(error.localizedDescription)
+                completion(.failure(error))
             }
         }
         
