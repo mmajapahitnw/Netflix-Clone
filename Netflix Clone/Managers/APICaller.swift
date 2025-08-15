@@ -142,4 +142,42 @@ class APICaller {
         }
         task.resume()
     }
+    
+    func getDiscoverMovies(completion: @escaping (Result<[Movie], Error>) -> Void) {
+        guard let url = URL(string: "https://api.themoviedb.org/3/discover/movie") else { return }
+        
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        let queryItems: [URLQueryItem] = [
+          URLQueryItem(name: "include_adult", value: "false"),
+          URLQueryItem(name: "include_video", value: "false"),
+          URLQueryItem(name: "language", value: "en-US"),
+          URLQueryItem(name: "page", value: "1"),
+          URLQueryItem(name: "sort_by", value: "popularity.desc"),
+        ]
+        components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
+
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = [
+          "accept": "application/json",
+          "Authorization": "Bearer \(Constants.READ_ACCESS_TOKEN)"
+        ]
+
+        let task = URLSession.shared.dataTask(with: request) { data, _, error in
+            guard let data=data, error==nil else { return }
+            
+            do {
+                let results = try JSONDecoder().decode(MoviesResponse.self, from: data)
+                print(results.results)
+                completion(.success(results.results))
+            } catch {
+                completion(.failure(APIError.failedToGetData))
+            }
+        }
+        task.resume()
+
+    }
 }
+
+
